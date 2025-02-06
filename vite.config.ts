@@ -42,12 +42,12 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        assetFileNames: 'assets/[name].[ext]'
-      }
-    }
+    // assetsDir: 'assets',
+    // rollupOptions: {
+    //   output: {
+    //     assetFileNames: 'assets/[name].[ext]'
+    //   }
+    // }
   },
   define: {
 		__APP_VERSION__: JSON.stringify(pkg.version)

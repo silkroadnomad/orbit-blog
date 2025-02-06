@@ -36,7 +36,6 @@
   }
 
   async function deletePost(post: Post, event: MouseEvent) {
-    console.log('Deleting post:', post);
     event.stopPropagation(); // Prevent triggering the post selection
     try {
       const postId = post._id;
@@ -51,40 +50,23 @@
     }
   }
 
-  async function dropAndSync() {
-    try {
-      // Drop the local database
-      await $postsDB.drop();
-      console.info('Local database dropped successfully');
-      
-      console.info('resyncing from network');
-    } catch (error) {
-      console.error('Error during drop and sync:', error);
-    }
+  // Helper function to ensure unique keys
+  function getPostKey(post: any): string {
+    // Try to create a unique key using multiple properties
+    return post._id || 
+           (post.title && post.date && `${post.title}-${post.date}`) || 
+           crypto.randomUUID();
   }
 </script>
 
 <div class="space-y-6">
-  <!-- New Sync Button -->
-  <div class="flex justify-end">
-    <button
-      on:click={dropAndSync}
-      class="bg-purple-600 dark:bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors flex items-center gap-2"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-      </svg>
-      Drop Posts & Sync from Network
-    </button>
-  </div>
-
   <div class="flex space-x-4 mb-6">
     <input
       type="text"
       placeholder="Search posts..."
       bind:value={searchQuery}
       class="flex-1 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-    />
+   />
     
     <select
       bind:value={selectedCategory}
@@ -104,7 +86,7 @@
     <div class="col-span-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 h-fit">
       <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Blog Posts</h2>
       <div class="space-y-2">
-        {#each filteredPosts as post (post._id)}
+        {#each filteredPosts as post (getPostKey(post))}
           <button
             class="w-full text-left p-3 rounded-md transition-colors {selectedPostId === post._id ? 'bg-indigo-50 dark:bg-indigo-900/50 border-indigo-500' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}"
             on:click={() => selectedPostId = post._id}

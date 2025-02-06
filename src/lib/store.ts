@@ -4,15 +4,18 @@ import { createHelia } from 'helia'
 import { createOrbitDB } from '@orbitdb/core'
 import { LevelDatastore } from 'datastore-level'
 import { LevelBlockstore } from 'blockstore-level'
-import { Libp2pOptions } from './config'
+import { getLibp2pOptions } from './config'
 import type { Post, Category, RemoteDB } from './types';
+
+// Get bootstrap preference from localStorage, default to true if not set
+const useBootstrap = localStorage.getItem('useBootstrap') !== 'false';
 
 // Initialize storage
 let blockstore = new LevelBlockstore('./helia-blocks');
 let datastore = new LevelDatastore('./helia-data');
 
-// Initialize Helia and OrbitDB
-const libp2p = await createLibp2p(Libp2pOptions)
+// Initialize Helia and OrbitDB using the stored preference
+const libp2p = await createLibp2p(getLibp2pOptions(useBootstrap))
 const helia = await createHelia({libp2p, datastore, blockstore})
 
 const orbitdb = await createOrbitDB({
@@ -28,6 +31,15 @@ export const postsDB = writable(null)
 export const remoteDBs = writable<RemoteDB[]>([])
 export const selectedDBAddress = writable<string | null>(null)
 export const remoteDBsDatabase = writable(null)
+
+// Create a writable store for the bootstrap preference
+export const bootstrapEnabled = writable(useBootstrap);
+
+// Subscribe to changes and update localStorage
+bootstrapEnabled.subscribe(value => {
+    localStorage.setItem('useBootstrap', value.toString());
+});
+
 // Sample data
 const samplePosts: Post[] = [
   {

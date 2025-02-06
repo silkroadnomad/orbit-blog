@@ -22,6 +22,9 @@ Visit [orbit-blog @ ipns](ipns://k51qzi5uqu5djjnnjgtviql86f19isjyz6azhw48ovgn22m
     - [ ] e2e tests
     - [ ] ci / cd
 - UI related
+    - [ ] show connected peers
+    - [x] get local & remote ip/port (IceInfo) to construct WebRTC-SDP and a QR-Code
+    - [x] create a scanner to scan WebRTC-SDP-Info to connect without relay to remote peer 
     - [x] deploy to IPFS
     - [x] markdown support for posts 
     - [ ] markdown support for comments
@@ -31,10 +34,11 @@ Visit [orbit-blog @ ipns](ipns://k51qzi5uqu5djjnnjgtviql86f19isjyz6azhw48ovgn22m
     - [ ] AcccessController: blog can only write local peer-id
         - [ ] hide delete posts / comments button if not owner  
     - [ ] blog settings centrally via settings db
-    - [ ] implement OneTimeAccessController 
+    - [ ] implement OneTimeAccessController to prevent privkey stealing from malicious browser extensions
         - keep temporary private key / peer-id on laptop 
-        - keep secure private key / persistant peer-id on phone
-        - implement One-Time-Access-Controller with own stream protocol and qr-code peering (phone accepts simple pubsub peering messages with simple pin code comparison)
+        - keep secure private key / persistent peer-id on a mobile pwa
+        - implement One-Time-Access-Controller with own stream protocol and/ WebRTC-bc-ur-code peering 
+        - are browsers supporting MDNS at all? 
     - [ ] DBManager connect & replicated remote blogs
     - [ ] create RaspberryPi pinning - relay
     - [ ] demonstrate webrtc-direct connections without relay-server but SDP-QR-Codes or SDP - Voice

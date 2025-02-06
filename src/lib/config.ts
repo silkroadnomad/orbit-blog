@@ -26,7 +26,7 @@ const pubSubPeerDiscoveryTopics =
 
 export const bootstrapConfig = {list: multiaddrs};
 
-export const Libp2pOptions = {
+export const getLibp2pOptions = (useBootstrap = true) => ({
     addresses: {
         // swarm: [address],
         listen: [
@@ -38,19 +38,27 @@ export const Libp2pOptions = {
     transports: [
         webTransport(),
         webSockets({filter: filters.all}),
-         webRTC({
-             rtcConfiguration: {
-                 iceServers:[{
-                     urls: [
-                         'stun:stun.l.google.com:19302',
-                         'stun:global.stun.twilio.com:3478'
-                     ]
-                 }]
-             }
-         }),
-        webRTCDirect(),
+        webRTC({
+            rtcConfiguration: {
+                iceServers:[{
+                    urls: [
+                        'stun:stun.l.google.com:19302',
+                        'stun:global.stun.twilio.com:3478'
+                    ]
+                }]
+            }
+        }),
+        webRTCDirect({
+            rtcConfiguration: {
+                iceServers:[{
+                    urls: [
+                        'stun:stun.l.google.com:19302',
+                        'stun:global.stun.twilio.com:3478'
+                    ]
+                }]
+            }
+        }),
         circuitRelayTransport({ discoverRelays: 1 })
-        // kadDHT({}),
     ],
     connectionEncryption: [noise()],
 /*    transportManager: {
@@ -65,7 +73,7 @@ export const Libp2pOptions = {
         }
     },
     peerDiscovery: [
-        bootstrap(bootstrapConfig),
+        ...(useBootstrap ? [bootstrap(bootstrapConfig)] : []),
         pubsubPeerDiscovery({
             interval: 10000,
             topics: pubSubPeerDiscoveryTopics, // defaults to ['_peer-discovery._p2p._pubsub']
@@ -91,4 +99,6 @@ export const Libp2pOptions = {
         //     clientMode: true,
         // })
     }
-}
+})
+
+export const Libp2pOptions = getLibp2pOptions(true);
